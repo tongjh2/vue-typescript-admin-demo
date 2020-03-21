@@ -197,9 +197,11 @@ export default class extends Vue {
         //   console.log(error)
         // }
 
-        await UserModule.Login(this.loginForm).catch(error=>{
-          console.log(error)
-        })
+        await UserModule.Login(this.loginForm)
+        
+        // .catch(error=>{
+        //   console.log(error)
+        // })
         
         this.$router.push({
           path: this.redirect || '/',

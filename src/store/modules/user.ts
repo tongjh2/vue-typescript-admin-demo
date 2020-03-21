@@ -53,6 +53,11 @@ class User extends VuexModule implements IUserState {
   }
 
   @Mutation
+  private setSession(session: Object){
+    this.session = session
+  }
+
+  @Mutation
   private SET_EMAIL(email: string) {
     this.email = email
   }
@@ -69,7 +74,6 @@ class User extends VuexModule implements IUserState {
       data: { username, password }
     })
     console.log( data )
-    this.session = data;
     setToken(data.Authorization)
     this.SET_TOKEN(data.Authorization)
   }
@@ -94,6 +98,7 @@ class User extends VuexModule implements IUserState {
     if (!data) {
       throw Error('Verification failed, please Login again.')
     }
+    this.setSession(data)
     this.SET_ROLES(data.roles)
     this.SET_NAME(data.name)
     this.SET_AVATAR(data.face)

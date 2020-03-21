@@ -34,7 +34,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
     } else {
       // Check whether the user has obtained his permission roles
       console.log( UserModule.session )
-      if (UserModule.roles.length === 0) {
+      if (!UserModule.session.id) {
         try {
           // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
           await UserModule.GetUserInfo()

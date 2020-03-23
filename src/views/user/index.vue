@@ -161,14 +161,6 @@ export default class extends Vue {
         this.getList()
     }
 
-    private handleModifyStatus(row: any, status: string) {
-        this.$message({
-            message: '操作成功',
-            type: 'success'
-        })
-        row.status = status
-    }
-
     private sortChange(data: any) {
         const { prop, order } = data
         if (prop === 'id') {

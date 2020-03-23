@@ -23,29 +23,22 @@
             <el-form-item label="角色名" prop="name">
                 <el-input v-model="form.name" />
             </el-form-item>
-            <el-form-item  label="权限" prop="role">   
-                <el-select v-model="form.role" style="width:100%">
-                    <el-option v-for="v in rabcRoleList" :key="v.id" :label="v.name" :value="v.id"/>
-                </el-select>
+            <el-form-item  label="权限" prop="route_ids">   
+                <el-tree
+                    ref="treeRoute"
+                    :data="treeData"
+                    show-checkbox
+                    check-strictly
+                    node-key="id"
+                    @check-change="changeRoute"
+                    :default-checked-keys="routeIds"
+                    :props="defaultProps">
+                </el-tree>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="isAdd = false">取消</el-button>
             <el-button type="primary" @click="submit">确定</el-button>
-        </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="isUpdateRole" title="修改角色" width="380px">
-        <el-form ref="dataForm" label-position="right" label-width="80px" style="width: 290px;"> 
-            <el-form-item label="角色" prop="role">
-                <el-select v-model="form.role" style="width:100%">
-                    <el-option v-for="v in rabcRoleList" :key="v.id" :label="v.name" :value="v.id"/>
-                </el-select>
-            </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button @click="isUpdateRole = false">取消</el-button>
-            <el-button type="primary" @click="submitUpdateRole">确定</el-button>
         </div>
     </el-dialog>
 </div>
@@ -55,23 +48,25 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Form } from 'element-ui'
 import { cloneDeep } from 'lodash'
-import { getSickList, getPageviews, createArticle, updateArticle, defaultArticleData } from '@/api/sick'
-import { userList,userAdd,userUpdateStatus,userUpdatePassword,userUpdateRole, defaultUserData } from '@/api/user'
-import { rabcRoleList } from '@/api/rabc_role'
-import { RabcRoleModule } from '@/store/modules/rabc_role'
-
-
-import { IArticleData } from '@/api/types'
+import { rabcRoleList,defaultRabcRoleData } from '@/api/rabc_role'
+import { rabcRouteList } from '@/api/rabc_route'
 import { exportJson2Excel } from '@/utils/excel'
 import { formatJson } from '@/utils'
 import Pagination from '@/components/Pagination/index.vue'
 
 
 @Component({
-  name: 'user',
-  components: { Pagination }
+    name: 'user',
+    components: { Pagination }
 })
 export default class extends Vue {
+
+    private routeIds = []
+    private treeData = []
+    private defaultProps = {
+        children: 'children',
+        label: 'label'
+    }
     
     private list: any[] = []
     private total = 0
@@ -89,21 +84,50 @@ export default class extends Vue {
     private downloadLoading = false
     private isAdd = false
     private isUpdateRole = false
-    private form = defaultUserData
+    private form = defaultRabcRoleData
     private rules = {
-        username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
-        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
-        role: [{ required: true, message: '角色不能为空', trigger: 'change' }],
-        phone: [{ required: true, message: '电话不能为空', trigger: 'blur' }]
-    }
-
-    get rabcRoleList(){
-        return RabcRoleModule.list;
+        name: [{ required: true, message: '角色名不能为空', trigger: 'blur' }],
+        route_ids: [{ required: true, message: '权限不能为空', trigger: 'change' }]
     }
 
     created() {
         this.getList()
-        RabcRoleModule.GetRabcRoleList({page_size:10})
+        this.getRabcRouteList();
+    }
+
+    //获取权限列表
+    private getRabcRouteList(){
+        rabcRouteList({page_size:10000}).then(res=>{
+            let list = (res.data.data||[]).map(v=>{
+                v.id = v.id;
+                v.label = v.name;
+                v.expand = false;
+                v.checked = false;
+                return v;
+            });
+            this.treeData = this.getTree(list,0);
+
+        },(error)=>{ console.log(error) })
+    }
+
+    //递归出一颗树
+    private getTree(list:any[],pid:number){
+        return list.filter(v=>{
+            if(v.pid==pid){
+                v['children'] = this.getTree(list,v.id);
+                return true;
+            }
+        })
+    }
+
+    //选择权限
+    private changeRoute(val:any) {        
+        console.log(this.$refs.treeRoute.getCheckedKeys());
+        this.$nextTick(()=>{
+            this.routeIds = this.$refs.treeRoute.getCheckedKeys();
+            this.form.route_ids = this.routeIds.join(",");
+            console.log(this.form.route_ids)
+        })        
     }
 
     private async getList() {
@@ -119,14 +143,6 @@ export default class extends Vue {
     private search() {
         this.params.page = 1
         this.getList()
-    }
-
-    private handleModifyStatus(row: any, status: string) {
-        this.$message({
-            message: '操作成功',
-            type: 'success'
-        })
-        row.status = status
     }
 
     private sortChange(data: any) {
@@ -151,12 +167,13 @@ export default class extends Vue {
     }
 
     private resetUserData() {
-        this.form = cloneDeep(defaultUserData)
+        this.form = cloneDeep(defaultRabcRoleData)
     }
 
     //新增
     private add() {
         this.resetUserData()
+        this.routeIds = [];
         this.isAdd = true
         this.$nextTick(() => {
             (this.$refs['dataForm'] as Form).clearValidate()
@@ -167,6 +184,8 @@ export default class extends Vue {
     private edit(row: any) {
         this.form = Object.assign({}, row)
         this.isAdd = true
+        this.routeIds = row.route_ids.split(",")
+        console.log(this.routeIds,this.form.route_ids)
         this.$nextTick(() => {
             (this.$refs['dataForm'] as Form).clearValidate()
         })

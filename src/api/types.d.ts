@@ -10,7 +10,8 @@ export interface UserData {
 
 export interface RabcRoleData {
   id: number
-  username: string
+  name: string
+  route_ids: string
 }
 
 export interface SickData {

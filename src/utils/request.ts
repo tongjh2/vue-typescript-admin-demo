@@ -30,8 +30,6 @@ service.interceptors.request.use(
     // config.data = params
     config.data = qs.stringify(config.data)
 
-    console.log( config )
-
     return config
   },
   (error) => {
@@ -51,7 +49,6 @@ service.interceptors.response.use(
     // code == 50005: username or password is incorrect
     // You can change this part for your own usage.
     const res = response.data
-    console.log(res)
     if (res.status !== 0) {
       Message({
         message: res.message || 'Error',

@@ -1,3 +1,31 @@
+export interface UserData {
+  id: number
+  username: string
+  name: string
+  role: number
+  phone: string
+  age: number
+  sex: number
+}
+
+export interface RabcRoleData {
+  id: number
+  username: string
+}
+
+export interface SickData {
+  id: number
+  name: string
+  age: number
+  sex: number
+  phone: string
+  qq: string
+  weixin: string
+  address: string 
+  order_time: string
+  department: number
+}
+
 export interface IArticleData {
   id: number
   status: string

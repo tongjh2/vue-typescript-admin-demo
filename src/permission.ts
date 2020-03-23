@@ -47,6 +47,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
           // Set the replace: true, so the navigation will not leave a history record
           next({ ...to, replace: true })
         } catch (err) {
+          console.log('ResetToken')
           // Remove token and redirect to login page
           UserModule.ResetToken()
           Message.error(err || 'Has Error')

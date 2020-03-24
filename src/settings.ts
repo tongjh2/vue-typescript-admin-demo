@@ -13,8 +13,8 @@ interface ISettings {
 // You can customize below settings :)
 const settings: ISettings = {
   title: 'Vue Typescript Admin',
-  showSettings: true,
-  showTagsView: true,
+  showSettings: false,
+  showTagsView: false,
   fixedHeader: false,
   showSidebarLogo: false,
   errorLog: ['production'],

@@ -14,6 +14,18 @@ export interface RabcRoleData {
   route_ids: string
 }
 
+export interface RabcRouteFormData {
+  id: number
+  pid: number 
+  name: string
+  content1: string
+  content2: string
+  content3: string
+  sort: number
+}
+
+
+
 export interface SickData {
   id: number
   name: string

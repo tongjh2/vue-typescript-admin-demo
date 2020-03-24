@@ -17,7 +17,7 @@ service.interceptors.request.use(
       config.headers['Authorization'] = UserModule.token
     }
 
-    if (config.method == 'post' || config.method == 'put') {
+    if (config.method === 'post' || config.method === 'put') {
       config.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' /// /解决axios提交post问题
     }
 

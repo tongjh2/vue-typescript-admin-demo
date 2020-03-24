@@ -14,7 +14,7 @@ export interface IUserState {
   introduction: string
   roles: string[]
   email: string,
-  session: Object
+  session: any
 }
 
 @Module({ dynamic: true, store, name: 'user' })
@@ -25,7 +25,7 @@ class User extends VuexModule implements IUserState {
   public introduction = ''
   public roles: string[] = []
   public email = ''
-  public session = {}
+  public session = { id:0 }
 
   @Mutation
   private SET_TOKEN(token: string) {
@@ -53,7 +53,7 @@ class User extends VuexModule implements IUserState {
   }
 
   @Mutation
-  private setSession(session: Object){
+  private setSession(session: any){
     this.session = session
   }
 

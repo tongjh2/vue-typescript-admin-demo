@@ -12,3 +12,10 @@ export const rabcRoleList = (params:any) => request({
     method: 'get',
     params
 })
+
+export const RabcRoleAdd = (params:any) => request({
+    url: '/rabc_role/add',
+    method: params.id?'PUT':'POST',
+    params
+})
+

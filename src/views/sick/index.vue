@@ -472,7 +472,7 @@ export default class extends Vue {
     (this.$refs['dataForm'] as Form).validate(async(valid) => {
       if (valid) {
         let { id, ...articleData } = this.tempArticleData
-        articleData.author = 'vue-typescript-admin'
+        // articleData.author = 'vue-typescript-admin'
         const { data } = await createArticle({ article: articleData })
         this.list.unshift(data.article)
         this.dialogFormVisible = false
@@ -488,7 +488,7 @@ export default class extends Vue {
 
   private handleUpdate(row: any) {
     this.tempArticleData = Object.assign({}, row)
-    this.tempArticleData.timestamp = +new Date(this.tempArticleData.timestamp)
+    // this.tempArticleData.timestamp = +new Date(this.tempArticleData.timestamp)
     this.dialogStatus = 'update'
     this.dialogFormVisible = true
     this.$nextTick(() => {
@@ -500,7 +500,7 @@ export default class extends Vue {
     (this.$refs['dataForm'] as Form).validate(async(valid) => {
       if (valid) {
         const tempData = Object.assign({}, this.tempArticleData)
-        tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+        // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
         const { data } = await updateArticle(tempData.id, { article: tempData })
         for (const v of this.list) {
           if (v.id === data.article.id) {
